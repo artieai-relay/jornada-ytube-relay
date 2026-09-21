@@ -92,7 +92,7 @@ def safe_filename(title, vid):
 
 def yt_search(query):
     """Returns list of dicts: id,title,uploader,duration,description."""
-    cmd = [YTDLP, "--no-warnings", "--skip-download", "--dump-single-json",
+    cmd = [YTDLP, "--no-warnings", "--impersonate", "chrome", "--skip-download", "--dump-single-json",
            "ytsearch%d:%s" % (SEARCH_RESULTS, query)]
     try:
         p = run(cmd, SEARCH_TIMEOUT)
@@ -121,7 +121,7 @@ def yt_search(query):
     return out
 
 def yt_meta(vid):
-    cmd = [YTDLP, "--no-warnings", "--skip-download", "--dump-single-json", vid]
+    cmd = [YTDLP, "--no-warnings", "--impersonate", "chrome", "--skip-download", "--dump-single-json", "--extractor-args", "youtube:player_client=android", vid]
     try:
         p = run(cmd, 90)
     except subprocess.TimeoutExpired:
@@ -138,8 +138,8 @@ def download_src(vid, dest):
            "/b[height<=480][ext=mp4]/b[height<=480]/b")
     # Socket timeout + limited retries: YouTube sometimes stalls
     # datacenter connections to zero throughput instead of closing them.
-    cmd = [YTDLP, "--no-warnings", "--socket-timeout", "20",
-           "--retries", "5", "-f", fmt, "-o", dest, vid]
+    cmd = [YTDLP, "--no-warnings", "--impersonate", "chrome", "--socket-timeout", "20",
+           "--retries", "5", "--extractor-args", "youtube:player_client=android", "-f", fmt, "-o", dest, vid]
     try:
         p = run(cmd, 600)
     except subprocess.TimeoutExpired:
